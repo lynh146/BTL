@@ -19,6 +19,6 @@
     </div>
     <nav class="nav-right">
       <a href="login.php">Đăng nhập</a>
-      <a href="register.php">Đăng ký</a>
+      <a href="signup.php">Đăng ký</a>
     </nav>
   </header>
