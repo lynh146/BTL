@@ -7,19 +7,30 @@ $msg = '';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = trim($_POST['username']);
     $password_input = $_POST['password'];
+// sửa dòng 11
+$stmt = mysqli_prepare($link, "
+    SELECT users.id, users.password, user_profiles.avatar
+    FROM users
+    LEFT JOIN user_profiles ON users.id = user_profiles.user_id
+    WHERE users.username = ?
+");
 
-    $stmt = mysqli_prepare($link, "SELECT id, password FROM users WHERE username = ?");
+if (!$stmt) {
+    die("Lỗi prepare: " . mysqli_error($link));
+}
     mysqli_stmt_bind_param($stmt, "s", $username);
     mysqli_stmt_execute($stmt);
     mysqli_stmt_store_result($stmt);
 
     if (mysqli_stmt_num_rows($stmt) === 1) {
-        mysqli_stmt_bind_result($stmt, $id, $password_db);
+      // sửa dòng 19
+        mysqli_stmt_bind_result($stmt, $id, $password_db, $avatar);
         mysqli_stmt_fetch($stmt);
 
         if ($password_input === $password_db) {
             $_SESSION['username'] = $username;
             $_SESSION['user_id'] = $id;
+            $_SESSION['avatar'] = (!empty($avatar)) ? $avatar : 'default.png'; // swradongf 33
             header("Location: index.php");
             exit;
         } else {

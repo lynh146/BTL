@@ -1,0 +1,133 @@
+body {
+  background: linear-gradient(to right, #ffe0b2, #fff3e0);
+  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.profile-container {
+  max-width: 850px;
+  margin: 20px auto;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.profile-card {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.profile-avatar {
+  flex: 1;
+  text-align: center;
+  padding: 10px;
+  background: #fff8f2;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(255, 112, 67, 0.1);
+}
+
+.profile-avatar img.avatar {
+  width: 100px; /* ↓ from 120px */
+  height: 100px;
+  border-radius: 50%;
+  border: 3px solid #ff7043;
+  object-fit: cover;
+  margin-bottom: 8px;
+}
+
+.profile-avatar form {
+  margin-top: 6px;
+}
+
+.profile-avatar label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #ff5722;
+}
+
+.profile-avatar input[type="file"] {
+  margin: 4px auto;
+  display: block;
+  font-size: 12px;
+}
+
+.profile-avatar button {
+  margin-top: 4px;
+  background-color: #ff5722;
+  color: white;
+  padding: 6px 14px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.profile-avatar button:hover {
+  background-color: #e64a19;
+}
+
+.profile-details {
+  flex: 2;
+}
+
+.profile-details h2 {
+  margin-bottom: 12px;
+  color: #ff5722;
+  font-size: 20px; /* ↓ from 22px */
+  border-bottom: 2px solid #ff9800;
+  display: inline-block;
+  padding-bottom: 3px;
+}
+
+.profile-details label {
+  display: block;
+  margin-top: 6px;
+  font-weight: 600;
+  font-size: 13px;
+  color: #444;
+}
+
+.profile-details input,
+.profile-details select,
+.profile-details textarea {
+  width: 100%;
+  padding: 6px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 13px;
+  margin-top: 3px;
+  background: #fdfdfd;
+}
+
+.profile-details textarea {
+  resize: vertical;
+  height: 50px; /* ↓ from 60px */
+}
+
+.profile-details button {
+  margin-top: 12px;
+  background: linear-gradient(to right, #ff7043, #ff9800);
+  color: white;
+  padding: 8px 18px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(255, 152, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.profile-details button:hover {
+  background: linear-gradient(to right, #e64a19, #f57c00);
+}

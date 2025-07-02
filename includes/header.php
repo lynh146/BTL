@@ -35,22 +35,29 @@ if (session_status() == PHP_SESSION_NONE) {
 
         <!-- Avatar + Dropdown -->
         <div class="user-menu">
-          <img src="assets/img/avatar1.jpg" class="avatar" alt="User Avatar">
-          <div class="dropdown">
-            <a href="profile.php">Trang cá nhân</a>
-            <a href="#">Đổi mật khẩu</a>
-            <a href="#">Quán yêu thích</a>
-            <a href="#">Đánh giá của tôi</a>
-            <a href="#">Đánh giá đã báo cáo</a>
-            <a href="logout.php">Đăng xuất</a>
-          </div>
+          <!-- sửa dòng 39 -->
+        <?php
+          $avatar = isset($_SESSION['avatar']) && !empty($_SESSION['avatar']) 
+                    ? htmlspecialchars($_SESSION['avatar']) 
+                    : 'default.png';
+        ?>
+        <img src="assets/img/<?= htmlspecialchars($_SESSION['avatar']) ?>" class="avatar" alt="User Avatar">
+
+        <div class="dropdown">
+          <a href="profile.php">Trang cá nhân</a>
+          <a href="#">Đổi mật khẩu</a>
+          <a href="#">Quán yêu thích</a>
+          <a href="#">Đánh giá của tôi</a>
+          <a href="#">Đánh giá đã báo cáo</a>
+          <a href="logout.php">Đăng xuất</a>
         </div>
-      <?php else: ?>
-        <a href="login.php">Đăng nhập</a>
-        <a href="signup.php">Đăng ký</a>
-      <?php endif; ?>
-    </nav>
-  </header>
+      </div>
+    <?php else: ?>
+      <a href="login.php">Đăng nhập</a>
+      <a href="signup.php">Đăng ký</a>
+    <?php endif; ?>
+  </nav>
+</header>
 <script src="assets/js/header_user.js"></script>
 
 </body>
