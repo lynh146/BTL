@@ -52,6 +52,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <button type="submit">Đăng nhập</button>
   </form>
   <div class="link-note">
+    
     <p>Chưa có tài khoản? <a href="signup.php">Đăng ký ngay</a></p>
   </div>
 </section>

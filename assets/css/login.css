@@ -78,5 +78,6 @@ button:hover {
 
 .link-note a:hover {
   text-decoration: underline;
+  
   color: rgb(232, 225, 221);
 }
