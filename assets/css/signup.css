@@ -1,7 +1,7 @@
 .form-container {
-  max-width: 420px;
+  max-width: 480px;
   margin: 60px auto;
-  background: #ffffff;
+  background: #fffaf5;
   padding: 40px;
   border-radius: 14px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
@@ -27,15 +27,18 @@
   color: #333;
 }
 
-.form-group input {
+.form-group input,
+.form-group select {
   width: 100%;
   padding: 12px 14px;
   border: 1px solid #ccc;
   border-radius: 8px;
   font-size: 15px;
+  transition: border-color 0.3s ease;
 }
 
-.form-group input:focus {
+.form-group input:focus,
+.form-group select:focus {
   border-color: #ff7043;
   outline: none;
   box-shadow: 0 0 0 2px rgba(255, 112, 67, 0.15);
@@ -51,10 +54,11 @@ button {
   font-weight: 600;
   font-size: 16px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 button:hover {
-  background-color: #e65a1f;
+  background-color: #e65100;
 }
 
 .error {
@@ -78,5 +82,5 @@ button:hover {
 
 .link-note a:hover {
   text-decoration: underline;
-  color: rgb(232, 225, 221);
+  color: #e65100;
 }
