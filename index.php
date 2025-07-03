@@ -10,7 +10,7 @@
             <option>Quận 3</option>
         </select>
         <select>
-            <option>Mức giá</option> 
+            <option>Mức giá</option>
             <option>Rẻ</option>
             <option>Trung bình</option>
             <option>Đắt</option>

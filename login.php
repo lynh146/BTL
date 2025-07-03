@@ -32,7 +32,7 @@ if (!$stmt) {
             $_SESSION['user_id'] = $id;
             $_SESSION['avatar'] = (!empty($avatar)) ? $avatar : 'default.png'; // swradongf 33
             header("Location: index.php");
-            exit; 
+            exit;
         } else {
             $msg = "Sai mật khẩu.";
         }

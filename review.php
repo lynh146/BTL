@@ -18,4 +18,4 @@
     - sau khi gửi đánh giá thành công, sẽ hiển thị thông báo thành công và chuyển hướng về trang chủ
     - nếu có lỗi thì hiển thị thông báo lỗi
 
---> 
+-->
