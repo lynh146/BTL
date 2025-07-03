@@ -50,6 +50,7 @@
   cursor: pointer;
   font-size: 22px;
   color: white;
+  line-height: 1; /*đảm bảo thẳng hàng với avatar */ 
 }
 
 .notif-dropdown {
