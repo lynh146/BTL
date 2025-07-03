@@ -7,7 +7,7 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-$user_id = $_SESSION['user_id'];
+$user_id = $_SESSION['user_id']; 
 
 // Xử lý cập nhật
 if ($_SERVER["REQUEST_METHOD"] === "POST") {

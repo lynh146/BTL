@@ -32,7 +32,7 @@ if (session_status() == PHP_SESSION_NONE) {
             📢 Bạn chưa có thông báo mới!
           </div>
         </div>
-
+ 
         <!-- Avatar + Dropdown -->
         <div class="user-menu">
           <!-- sửa dòng 39 -->

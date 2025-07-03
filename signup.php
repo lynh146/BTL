@@ -8,7 +8,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = trim($_POST['username']);
     $email = trim($_POST['email']);
     $phone = trim($_POST['phone']);
-    $gender = $_POST['gender'];
+    $gender = $_POST['gender']; 
     $dob = $_POST['dob'];
     $password_input = $_POST['password'];
     $re_password = $_POST['re_password'];
