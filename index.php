@@ -1,6 +1,6 @@
 <!-- index.php -->
 <?php include("includes/header.php"); ?>
-<link rel="stylesheet" href="../BTL-main/assets/css/quannoibat.css">
+<link rel="stylesheet" href="../BTL-main/assets/css/restaurants.css">
 <div class="hero">
     <div class="search-box">
         <input type="text" placeholder="Bạn muốn ăn gì?">
@@ -28,8 +28,6 @@
 <section>
     <h2>Quán ăn nổi bật</h2>
     <?php
-$conn = mysqli_connect("localhost", "root", "", "food_review", 3308);
-mysqli_set_charset($conn, "utf8");
 
 $sql = "SELECT id, name, location, price_level, image_url, rating
         FROM restaurants
