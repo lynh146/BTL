@@ -6,6 +6,26 @@ body {
   color: #333;
 }
 
+/* ===== Tiêu đề khu vực (h2) ===== */
+section h2 {
+  font-size: 28px;
+  color: #e74c3c;
+  margin: 50px 0 25px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #ffd6d6;
+  font-weight: 700;
+  text-align: left;
+  position: relative;
+}
+
+/* Hiệu ứng icon trước h2 nếu muốn */
+section h2::before {
+  content: "🔥 ";
+  font-size: 24px;
+  position: relative;
+  top: -1px;
+}
+
 /* ===== Header ===== */
 header {
   background-color: #ff7043;
@@ -132,15 +152,12 @@ section {
   margin: auto;
 }
 
-h2 {
-  margin-bottom: 20px;
-}
-
 /* ===== Restaurant Grid ===== */
 .restaurant-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 20px;
+
 }
 
 .restaurant-card {
@@ -233,6 +250,97 @@ h2 {
   margin: 2px 0;
 }
 
+
+.box-reviews {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: #fffdf5;
+  border-radius: 12px;
+  box-shadow: 0 0 12px rgba(0,0,0,0.08);
+}
+
+.box-reviews .box-header {
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: none;
+}
+
+.box-reviews .box-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.box-reviews .item {
+  flex: 1 1 calc(50% - 20px); /* 2 cột trên desktop */
+  display: flex;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  transition: transform 0.2s;
+}
+
+.box-reviews .item:hover {
+  transform: translateY(-5px);
+}
+
+.box-reviews .thumb {
+  width: 140px;
+  height: 140px;
+  object-fit: cover;
+  border-right: 1px solid #eee;
+}
+
+.box-reviews .info {
+  padding: 15px;
+  flex: 1;
+}
+
+.box-reviews .title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #e67e22;
+  text-decoration: none;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.box-reviews .meta {
+  font-size: 14px;
+  color: #777;
+  margin-bottom: 8px;
+}
+
+.box-reviews .rating {
+  font-size: 16px;
+  color: #f39c12;
+  margin-bottom: 6px;
+}
+
+.box-reviews .content {
+  font-size: 15px;
+  color: #333;
+  line-height: 1.4;
+}
+
+/* Responsive: 1 cột trên màn hình nhỏ */
+@media (max-width: 768px) {
+  .box-reviews .item {
+    flex: 1 1 100%;
+  }
+
+  .box-reviews .thumb {
+    width: 100px;
+    height: 100px;
+  }
+}
+
+
 /* ===== Footer ===== */
 footer {
   text-align: center;
@@ -240,3 +348,4 @@ footer {
   background-color: #f5f5f5;
   color: #777;
 }
+
