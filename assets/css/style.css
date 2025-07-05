@@ -166,4 +166,67 @@ header {
   align-items: center;
   gap: 16px;
 }
+
+.box-noibat {
+  width: 300px;
+  background: #fffdf2;
+  border: 1px solid #ffd6d6;
+  border-radius: 6px;
+  padding: 10px 15px;
+  font-family: Arial;
+  margin: 20px 0 20px 10px;
+  float: left;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.box-header {
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 5px;
+}
+
+.box-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.box-list .item {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+  border-bottom: 1px dashed #eee;
+  padding-bottom: 8px;
+}
+
+.box-list .thumb {
+  width: 60px;
+  height: 60px;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+.box-list .info {
+  flex: 1;
+}
+
+.box-list .title {
+  font-weight: bold;
+  font-size: 14px;
+  color: #333;
+  text-decoration: none;
+}
+
+.box-list .title:hover {
+  color: #c0392b;
+}
+
+.box-list .meta, .box-list .rating {
+  font-size: 13px;
+  color: #666;
+  margin: 2px 0;
+}
+
  
