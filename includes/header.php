@@ -19,7 +19,7 @@ if (session_status() == PHP_SESSION_NONE) {
       <div class="logo">Ăn Gì Hôm Nay?</div>
       <nav class="nav-left">
         <a href="index.php">Trang chủ</a>
-        <a href="#">Quán nổi bật</a>
+        <a href="restaurants.php">Quán nổi bật</a>
         <a href="#">Viết đánh giá</a>
       </nav>
     </div>

@@ -2,6 +2,7 @@
 <?php include("includes/header.php"); ?>
  <?php include("includes/config.php"); ?>
 <link rel="stylesheet" href="assets/css/style.css">
+<!-- <link rel="stylesheet" href="assets/css/restaurant.css"> -->
 <div class="hero">
     <div class="search-box">
         <input type="text" placeholder="Bạn muốn ăn gì?">
@@ -30,36 +31,40 @@
 <section>
     <h2>Quán ăn nổi bật</h2>
     <?php
-mysqli_set_charset($link, "utf8");
+    mysqli_set_charset($link, "utf8");
 
-$sql = "SELECT id, name, location, price_level, image_url, rating
-        FROM restaurants
-        ORDER BY count DESC
-        LIMIT 5";
-$result = mysqli_query($link, $sql);
-?>
+    $sql = "SELECT id, name, location, price_level, image_url, rating
+            FROM restaurants
+            ORDER BY count DESC
+            LIMIT 6"; // lấy 6 quán
+    $result = mysqli_query($link, $sql);
+    ?>
 
-<div class="box-noibat">
-  <div class="box-header">
-    <a href="restaurants.php" style="text-decoration: none; color: #e74c3c;">
-      🔥 Quán ăn nổi bật
-    </a>
-  </div>
-  <ul class="box-list">
+    <div class="featured-wrapper">
     <?php while ($row = mysqli_fetch_assoc($result)) { ?>
-      <li class="item">
-        <a href="restaurant_view.php?id=<?php echo $row['id']; ?>">
-          <img src="<?php echo $row['image_url']; ?>" class="thumb" alt="Ảnh">
-        </a>
-        <div class="info">
-          <a href="restaurant_view.php?id=<?php echo $row['id']; ?>" class="title"><?php echo $row['name']; ?></a>
-          <p class="meta">📍 <?php echo $row['location']; ?> | 💰 <?php echo $row['price_level']; ?></p>
-          <p class="rating">⭐ <?php echo number_format($row['rating'], 1); ?></p>
+      <div class="box-noibat">
+        <div class="box-header">
+          <a href="restaurant_view.php?id=<?php echo $row['id']; ?>" style="text-decoration: none; color: #e74c3c;">
+            🔥 <?php echo htmlspecialchars($row['name']); ?>
+          </a>
         </div>
-      </li>
+        <ul class="box-list">
+          <li class="item">
+            <a href="restaurant_view.php?id=<?php echo $row['id']; ?>">
+              <img src="<?php echo htmlspecialchars($row['image_url']); ?>" class="thumb" alt="Ảnh">
+            </a>
+            <div class="info">
+              <a href="restaurant_view.php?id=<?php echo $row['id']; ?>" class="title"><?php echo htmlspecialchars($row['name']); ?></a>
+              <p class="meta">📍 <?php echo htmlspecialchars($row['location']); ?> | 💰 <?php echo htmlspecialchars($row['price_level']); ?></p>
+              <p class="rating">⭐ <?php echo number_format($row['rating'], 1); ?></p>
+            </div>
+          </li>
+        </ul>
+      </div>
     <?php } ?>
-  </ul>
-</div>
+    <div style="clear: both;"></div>
+    </div>
+</section>
     <!-- 
     Dùng các hàm để tự n truy vấn hiển thị lên k được nhập tay từng quán, yêu cầu 3-6 quán hiển thị danh sách
     Tên quán
