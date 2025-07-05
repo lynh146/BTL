@@ -4,27 +4,9 @@
 <link rel="stylesheet" href="assets/css/style.css">
 <!-- <link rel="stylesheet" href="assets/css/restaurant.css"> -->
 <div class="hero">
-    <div class="search-box">
-        <input type="text" placeholder="Bạn muốn ăn gì?">
-        <select>
-            <option>Khu vực</option>
-            <option>Quận 1</option>
-            <option>Quận 3</option>
-        </select>
-        <select>
-            <option>Mức giá</option> 
-            <option>Rẻ</option>
-            <option>Trung bình</option>
-            <option>Đắt</option>
-        </select>
-        <select>
-            <option>Loại món</option>
-            <option>Phở</option>
-            <option>Bún</option>
-            <option>Ăn vặt</option>
-        </select>
-        <button>Tìm quán ngay</button>
-    </div>
+
+<?php include("includes/search_box.php"); ?>
+
 
 </div>
 <!-- QUÁN NỔI BẬT -->

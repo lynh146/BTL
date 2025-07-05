@@ -1,3 +1,5 @@
+<?php include('includes/header.php'); ?>
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -100,6 +102,6 @@ $(document).ready(function(){
   });
 });
 </script>
-
 </body>
 </html>
+<?php include('includes/footer.php'); ?>

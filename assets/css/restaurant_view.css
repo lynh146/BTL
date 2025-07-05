@@ -1,8 +1,14 @@
 body {
   font-family: 'Segoe UI', sans-serif;
   background-color: #fdfdfd;
-  margin: 0 auto;
+  margin: 0;
+  padding: 0;
+}
+
+/* Thêm thẻ chứa nội dung */
+.container {
   max-width: 900px;
+  margin: 0 auto;
   padding: 20px;
 }
 

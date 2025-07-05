@@ -1,4 +1,4 @@
-
+<?php include('includes/header.php'); ?>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -28,6 +28,7 @@ if (!$quan) {
 
 $locationLink = "https://www.google.com/maps/search/?api=1&query=" . urlencode($quan['location']);
 ?>
+<div class="container">
   <div class="header">
     <h2><?php echo $quan['name']; ?></h2>
   </div>
@@ -89,6 +90,7 @@ $locationLink = "https://www.google.com/maps/search/?api=1&query=" . urlencode($
   <div class="back-link">
     <a href="restaurants.php">← Quay lại danh sách quán nổi bật</a>
   </div>
+</div>
 <script>
 $(document).ready(function () {
   $("#toggle-hours").click(function () {
@@ -104,3 +106,5 @@ $(document).ready(function () {
 </script>
 </body>
 </html>
+
+<?php include('includes/footer.php'); ?>
