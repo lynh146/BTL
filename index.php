@@ -1,7 +1,7 @@
 <!-- index.php -->
 <?php include("includes/header.php"); ?>
  <?php include("includes/config.php"); ?>
-<link rel="stylesheet" href="../BTL-main/assets/css/restaurants.css">
+<link rel="stylesheet" href="assets/css/style.css">
 <div class="hero">
     <div class="search-box">
         <input type="text" placeholder="Bạn muốn ăn gì?">
