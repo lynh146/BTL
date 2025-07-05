@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Top Quán Ăn Nổi Bật</title>
-  <link rel="stylesheet" href="assets/css/noibat.css">
+  <link rel="stylesheet" href="assets/css/restaurant.css">
   <script src="assets/js/jquery-3.7.1.min.js"></script>
 </head>
 <body>
@@ -29,13 +29,6 @@ if (!empty($_GET['category'])) {
 $where[] = "category_id = $cat";
 }
 
-
-
-if (!empty($_GET['sort'])) {
-  if ($_GET['sort'] == 'rating') $order = "ORDER BY rating DESC";
-  if ($_GET['sort'] == 'latest') $order = "ORDER BY created_at DESC";
-  if ($_GET['sort'] == 'fav') $order = "ORDER BY favorites DESC";
-}
 
 if (!empty($where)) $sql .= " WHERE " . implode(" AND ", $where);
 $sql .= " $order LIMIT 10";
@@ -62,15 +55,6 @@ $result = mysqli_query($conn, $sql);
   }
   ?>
 </select>
-
- 
-
-  <select name="sort">
-    <option value="">⚙️ Sắp xếp</option>
-    <option value="rating">Đánh giá cao</option>
-    <option value="latest">Mới nhất</option>
-    <option value="fav">Yêu thích nhiều</option>
-  </select>
 
   <button type="submit">🔍 Lọc</button>
 </form>
