@@ -8,19 +8,18 @@
   <script src="assets/js/jquery-3.7.1.min.js"></script>
 </head>
 <body>
-
+   <?php include("includes/config.php"); ?>
 <?php
 $sql = "SELECT id, name, location, image_url,price_level, count FROM restaurants";
-$conn = mysqli_connect("localhost", "root", "", "food_review", 3308);
-mysqli_set_charset($conn, "utf8");
-$categories_res = mysqli_query($conn, "SELECT id, name FROM categories");
+mysqli_set_charset($link, "utf8");
+$categories_res = mysqli_query($link, "SELECT id, name FROM categories");
 
 // Xử lý filter
 $where = [];
 $order = "ORDER BY count DESC";
 
 if (!empty($_GET['price_level'])) {
-  $level = mysqli_real_escape_string($conn, $_GET['price_level']);
+  $level = mysqli_real_escape_string($link, $_GET['price_level']);
   $where[] = "price_level = '$level'";
 }
 
@@ -32,7 +31,7 @@ $where[] = "category_id = $cat";
 
 if (!empty($where)) $sql .= " WHERE " . implode(" AND ", $where);
 $sql .= " $order LIMIT 10";
-$result = mysqli_query($conn, $sql);
+$result = mysqli_query($link, $sql);
 ?>
 
 <h2>🔥 Top Quán Ăn Nổi Bật</h2>
@@ -55,7 +54,6 @@ $result = mysqli_query($conn, $sql);
   }
   ?>
 </select>
-
   <button type="submit">🔍 Lọc</button>
 </form>
 
@@ -93,7 +91,7 @@ $(document).ready(function(){
     box.addClass("jumpscare");
 
     setTimeout(function() {
-      window.location.href = "chitiet.php?id=" + id;
+      window.location.href = "restaurant_view.php?id=" + id;
     }, 300);
   });
 });

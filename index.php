@@ -1,5 +1,6 @@
 <!-- index.php -->
 <?php include("includes/header.php"); ?>
+ <?php include("includes/config.php"); ?>
 <link rel="stylesheet" href="../BTL-main/assets/css/restaurants.css">
 <div class="hero">
     <div class="search-box">
@@ -28,6 +29,7 @@
 <section>
     <h2>Quán ăn nổi bật</h2>
     <?php
+mysqli_set_charset($link, "utf8");
 
 $sql = "SELECT id, name, location, price_level, image_url, rating
         FROM restaurants
@@ -45,11 +47,11 @@ $result = mysqli_query($link, $sql);
   <ul class="box-list">
     <?php while ($row = mysqli_fetch_assoc($result)) { ?>
       <li class="item">
-        <a href="chitiet.php?id=<?php echo $row['id']; ?>">
+        <a href="restaurant_view.php?id=<?php echo $row['id']; ?>">
           <img src="<?php echo $row['image_url']; ?>" class="thumb" alt="Ảnh">
         </a>
         <div class="info">
-          <a href="chitiet.php?id=<?php echo $row['id']; ?>" class="title"><?php echo $row['name']; ?></a>
+          <a href="restaurant_view.php?id=<?php echo $row['id']; ?>" class="title"><?php echo $row['name']; ?></a>
           <p class="meta">📍 <?php echo $row['location']; ?> | 💰 <?php echo $row['price_level']; ?></p>
           <p class="rating">⭐ <?php echo number_format($row['rating'], 1); ?></p>
         </div>
