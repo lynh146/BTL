@@ -27,7 +27,7 @@ if (!$stmt) {
         mysqli_stmt_bind_result($stmt, $id, $password_db, $avatar);
         mysqli_stmt_fetch($stmt);
 
-        if ($password_input === $password_db) {
+        if (password_verify($password_input, $password_db)) {
             $_SESSION['username'] = $username;
             $_SESSION['user_id'] = $id;
             $_SESSION['avatar'] = (!empty($avatar)) ? $avatar : 'default.png'; // swradongf 33

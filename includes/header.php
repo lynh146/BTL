@@ -41,7 +41,8 @@ if (session_status() == PHP_SESSION_NONE) {
                     ? htmlspecialchars($_SESSION['avatar']) 
                     : 'default.png';
         ?>
-        <img src="assets/img/<?= htmlspecialchars($_SESSION['avatar']) ?>" class="avatar" alt="User Avatar">
+        
+        <img src="assets/img/<?= $avatar ?>" class="avatar" alt="User Avatar">
 
         <div class="dropdown">
           <a href="profile.php">Trang cá nhân</a>
