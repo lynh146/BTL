@@ -33,7 +33,7 @@ $sql = "SELECT id, name, location, price_level, image_url, rating
         FROM restaurants
         ORDER BY count DESC
         LIMIT 5";
-$result = mysqli_query($conn, $sql);
+$result = mysqli_query($link, $sql);
 ?>
 
 <div class="box-noibat">
