@@ -68,19 +68,34 @@ $locationLink = "https://www.google.com/maps/search/?api=1&query=" . urlencode($
     <h3>💬 Đánh giá từ người dùng</h3>
     <?php
     $reviews = mysqli_query($link, "
-      SELECT r.content, r.rating, u.username, r.created_at 
+      SELECT r.id AS review_id, r.content, r.rating, u.username, r.created_at 
       FROM reviews r 
       LEFT JOIN users u ON r.user_id = u.id 
       WHERE r.restaurant_id = $id AND r.is_approved = 1
       ORDER BY r.created_at DESC
     ");
 
+
     if (mysqli_num_rows($reviews) > 0) {
         while ($rev = mysqli_fetch_assoc($reviews)) {
-            echo "<div class='review-item'>";
-            echo "<strong>{$rev['username']}</strong> ({$rev['rating']}★): {$rev['content']}<br><em>{$rev['created_at']}</em>";
-            echo "</div>";
-        }
+    echo "<div class='review-item'>";
+    echo "<strong>{$rev['username']}</strong> ({$rev['rating']}★): {$rev['content']}<br>";
+
+    // ✅ Thêm đoạn lấy ảnh từ bảng images dựa theo review_id
+    $review_id = $rev['review_id'];
+    $img_sql = "SELECT image_url FROM images WHERE review_id = $review_id LIMIT 1";
+    $img_result = mysqli_query($link, $img_sql);
+    $img = mysqli_fetch_assoc($img_result);
+
+    if ($img && !empty($img['image_url'])) {
+        echo "<img src='" . htmlspecialchars($img['image_url']) . "' alt='Ảnh đánh giá' 
+              style='max-width: 300px; margin-top: 8px; display: block; border-radius: 8px;'>";
+    }
+
+    echo "<em>{$rev['created_at']}</em>";
+    echo "</div>";
+}
+
     } else {
         echo "<p>Chưa có đánh giá nào cho quán này.</p>";
     }

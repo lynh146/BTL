@@ -1,5 +1,6 @@
 <?php
 session_start();
+include("includes/header.php"); 
 include('includes/config.php'); // Gọi file kết nối CSDL
 
 // Kiểm tra đăng nhập
@@ -12,9 +13,25 @@ if (!isset($_SESSION['user_id'])) {
 $sql = "SELECT id, name, location FROM restaurants";
 $result = $link->query($sql);
 $restaurants = [];
-while ($row = $result->fetch_assoc()) {
-    $restaurants[] = $row;
+while ($rev = mysqli_fetch_assoc($reviews)) {
+    echo "<div class='review-item'>";
+    echo "<strong>{$rev['username']}</strong> ({$rev['rating']}★): {$rev['content']}<br>";
+
+    // Truy vấn ảnh dựa theo review_id
+    $review_id = $rev['review_id'];
+    $img_sql = "SELECT image_url FROM images WHERE review_id = $review_id LIMIT 1";
+    $img_result = mysqli_query($link, $img_sql);
+    $img = mysqli_fetch_assoc($img_result);
+
+    if ($img && !empty($img['image_url'])) {
+        echo "<img src='" . htmlspecialchars($img['image_url']) . "' alt='Ảnh đánh giá' 
+                 style='max-width: 300px; margin-top: 8px; display: block; border-radius: 8px;'>";
+    }
+
+    echo "<em>{$rev['created_at']}</em>";
+    echo "</div>";
 }
+
 
 // Xử lý khi người dùng gửi đánh giá
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -24,7 +41,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $rating = (float)$_POST['rating'];
     $review_content = trim($_POST['review_content']);
     $user_id = $_SESSION['user_id'];
-    $now = date('Y-m-d H:i:s');
 
     // Kiểm tra xem quán đã tồn tại chưa
     $restaurant_id = null;
@@ -48,30 +64,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // Lưu hình ảnh nếu có
-    if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-        $upload_dir = 'uploads/';
-        if (!is_dir($upload_dir)) mkdir($upload_dir, 0777, true);
-        $filename = uniqid() . '_' . basename($_FILES['image']['name']);
-        $image_path = $upload_dir . $filename;
-        move_uploaded_file($_FILES['image']['tmp_name'], $image_path);
-
-        // Lưu vào bảng images
-        $stmt = $conn->prepare("INSERT INTO images (restaurant_id, image_url, uploaded_by) VALUES (?, ?, ?)");
-        $stmt->bind_param("isi", $restaurant_id, $image_path, $user_id);
-        $stmt->execute();
-    }
-
-    // Thêm đánh giá
+    // ✅ BƯỚC 1: Thêm đánh giá trước
     $stmt = $link->prepare("INSERT INTO reviews (restaurant_id, user_id, content, rating) VALUES (?, ?, ?, ?)");
     $stmt->bind_param("iisd", $restaurant_id, $user_id, $review_content, $rating);
     if ($stmt->execute()) {
+        $review_id = $stmt->insert_id; // ✅ lấy id review mới thêm
+
+        // ✅ BƯỚC 2: Lưu ảnh nếu có, và gắn vào review_id
+        if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+            $upload_dir = 'uploads/';
+            if (!is_dir($upload_dir)) mkdir($upload_dir, 0777, true);
+            $filename = uniqid() . '_' . basename($_FILES['image']['name']);
+            $image_path = $upload_dir . $filename;
+            move_uploaded_file($_FILES['image']['tmp_name'], $image_path);
+
+            // Lưu vào bảng images (có cả review_id)
+            $stmt = $link->prepare("INSERT INTO images (restaurant_id, review_id, image_url, uploaded_by) VALUES (?, ?, ?, ?)");
+            $stmt->bind_param("iisi", $restaurant_id, $review_id, $image_path, $user_id);
+            $stmt->execute();
+        }
+
         echo "<script>alert('Gửi đánh giá thành công!'); window.location.href='index.php';</script>";
         exit();
     } else {
         echo "<p style='color:red'>Lỗi khi gửi đánh giá: " . $stmt->error . "</p>";
     }
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -80,43 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <title>Đánh giá quán ăn</title>
-    <link rel="stylesheet" href="styles.css">
-    <style>
-    body {
-        background-color: #fffaf0;
-        font-family: Arial;
-    }
-
-    form {
-        max-width: 600px;
-        margin: 30px auto;
-        background: #fff;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 0 10px #ccc;
-    }
-
-    input,
-    select,
-    textarea {
-        width: 100%;
-        margin-bottom: 15px;
-        padding: 10px;
-    }
-
-    label {
-        font-weight: bold;
-    }
-
-    button {
-        background-color: #ff6600;
-        color: white;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-    </style>
+    <link rel="stylesheet" href="assets/css/review.css">
 </head>
 
 <body>
@@ -157,5 +140,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <button type="submit">Gửi đánh giá</button>
     </form>
 </body>
-
 </html>
+<?php include("includes/footer.php"); ?>

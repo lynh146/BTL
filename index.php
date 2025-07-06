@@ -63,7 +63,7 @@
 <section>
     <h2> Đánh Giá Nổi Bật </h2>
 <?php
-    $sql_reviews = "SELECT r.id, r.restaurant_id, r.content, r.rating, r.created_at, 
+    $sql_reviews = "SELECT  image_url,r.id, r.restaurant_id, r.content, r.rating, r.created_at, 
                            res.name AS restaurant_name, u.username
                     FROM reviews r
                     JOIN restaurants res ON r.restaurant_id = res.id
@@ -88,7 +88,7 @@
             ?>
             <li class="item">
                 <a href="restaurant_view.php?id=<?php echo $row['restaurant_id']; ?>#review-<?php echo $row['id']; ?>">
-                    <img src="<?php echo $image_url; ?>" class="thumb" alt="Ảnh quán">
+                    <img src="<?php echo htmlspecialchars($row['image_url']); ?>" class="thumb" alt="Ảnh">
                 </a>
                 <div class="info">
                     <a href="restaurant_view.php?id=<?php echo $row['restaurant_id']; ?>#review-<?php echo $row['id']; ?>"
@@ -103,5 +103,6 @@
         </ul>
     </div>
 </section>
+
 
 <?php include("includes/footer.php"); ?>

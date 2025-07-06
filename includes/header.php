@@ -12,7 +12,6 @@ if (session_status() == PHP_SESSION_NONE) {
   <link rel="stylesheet" href="assets/css/style.css">
   <link rel="stylesheet" href="assets/css/header_user.css">
 
-
 </head>
 <body>
   <header>
@@ -42,9 +41,8 @@ if (session_status() == PHP_SESSION_NONE) {
                     ? htmlspecialchars($_SESSION['avatar']) 
                     : 'default.png';
         ?>
-        
+        <div class="user-menu">
         <img src="assets/img/<?= $avatar ?>" class="avatar" alt="User Avatar">
-
         <div class="dropdown">
           <a href="profile.php">Trang cá nhân</a>
           <a href="#">Đổi mật khẩu</a>
@@ -52,6 +50,7 @@ if (session_status() == PHP_SESSION_NONE) {
           <a href="#">Đánh giá của tôi</a>
           <a href="#">Đánh giá đã báo cáo</a>
           <a href="logout.php">Đăng xuất</a>
+        </div>
         </div>
       </div>
     <?php else: ?>
