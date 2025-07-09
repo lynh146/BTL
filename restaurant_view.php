@@ -5,29 +5,31 @@
   <meta charset="UTF-8">
   <title><?php echo $quan['name']; ?> - Chi tiết quán ăn</title>
   <link rel="stylesheet" href="assets/css/restaurant_view.css">
- <script src="js/jquery-3.7.1.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
 <body>
-    <?php include("includes/config.php"); ?>
 <?php
-mysqli_set_charset($link, "utf8");
+    include("includes/config.php");
+    mysqli_set_charset($link, "utf8");
 
-$id = isset($_GET['id']) ? intval($_GET['id']) : 0;
-mysqli_query($link, "UPDATE restaurants SET count = count + 1 WHERE id = $id");
-$sql = "SELECT r.*, c.name AS category_name 
-        FROM restaurants r 
-        LEFT JOIN categories c ON r.category_id = c.id 
-        WHERE r.id = $id";
-$result = mysqli_query($link, $sql);
-$quan = mysqli_fetch_assoc($result);
+    $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+    mysqli_query($link, "UPDATE restaurants SET count = count + 1 WHERE id = $id");
 
-if (!$quan) {
-    echo "<h2>❌ Không tìm thấy quán ăn!</h2>";
-    exit;
-}
+    $sql = "SELECT r.*, c.name AS category_name 
+            FROM restaurants r 
+            LEFT JOIN categories c ON r.category_id = c.id 
+            WHERE r.id = $id";
+    $result = mysqli_query($link, $sql);
+    $quan = mysqli_fetch_assoc($result);
 
-$locationLink = "https://www.google.com/maps/search/?api=1&query=" . urlencode($quan['location']);
+    if (!$quan) {
+        echo "<h2>❌ Không tìm thấy quán ăn!</h2>";
+        exit;
+    }
+
+    $locationLink = "https://www.google.com/maps/search/?api=1&query=" . urlencode($quan['location']);
 ?>
+
 <div class="container">
   <div class="header">
     <h2><?php echo $quan['name']; ?></h2>
@@ -38,8 +40,8 @@ $locationLink = "https://www.google.com/maps/search/?api=1&query=" . urlencode($
   </div>
 
   <div style="text-align: center; margin: 15px 0;">
-    <button id="toggle-hours">🕒 Mấy giờ thì cửa mở nhỉ </button>
-    <button id="go-review">💬 Xem đánh giá</button>
+    <button id="scroll-hours">🕒 Mấy giờ thì cửa mở nhỉ</button>
+    <button id="scroll-review">💬 Xem đánh giá</button>
     <button onclick="window.location.href='review.php?id=<?php echo $quan['id']; ?>'">✍️ Viết đánh giá</button>
   </div>
 
@@ -52,7 +54,7 @@ $locationLink = "https://www.google.com/maps/search/?api=1&query=" . urlencode($
     <p>👁 <strong>Lượt xem:</strong> <?php echo $quan['count'] + 1; ?></p>
   </div>
 
-  <div class="hours-box">
+  <div class="hours-box" id="hours-section">
     <h3>🕒 Giờ mở cửa</h3>
     <ul>
       <?php
@@ -64,7 +66,7 @@ $locationLink = "https://www.google.com/maps/search/?api=1&query=" . urlencode($
     </ul>
   </div>
 
-  <div class="reviews-box">
+  <div class="reviews-box" id="reviews-section">
     <h3>💬 Đánh giá từ người dùng</h3>
     <?php
     $reviews = mysqli_query($link, "
@@ -75,27 +77,24 @@ $locationLink = "https://www.google.com/maps/search/?api=1&query=" . urlencode($
       ORDER BY r.created_at DESC
     ");
 
-
     if (mysqli_num_rows($reviews) > 0) {
         while ($rev = mysqli_fetch_assoc($reviews)) {
-    echo "<div class='review-item'>";
-    echo "<strong>{$rev['username']}</strong> ({$rev['rating']}★): {$rev['content']}<br>";
+            echo "<div class='review-item'>";
+            echo "<strong>{$rev['username']}</strong> ({$rev['rating']}★): {$rev['content']}<br>";
 
-    // ✅ Thêm đoạn lấy ảnh từ bảng images dựa theo review_id
-    $review_id = $rev['review_id'];
-    $img_sql = "SELECT image_url FROM images WHERE review_id = $review_id LIMIT 1";
-    $img_result = mysqli_query($link, $img_sql);
-    $img = mysqli_fetch_assoc($img_result);
+            $review_id = $rev['review_id'];
+            $img_sql = "SELECT image_url FROM images WHERE review_id = $review_id LIMIT 1";
+            $img_result = mysqli_query($link, $img_sql);
+            $img = mysqli_fetch_assoc($img_result);
 
-    if ($img && !empty($img['image_url'])) {
-        echo "<img src='" . htmlspecialchars($img['image_url']) . "' alt='Ảnh đánh giá' 
-              style='max-width: 300px; margin-top: 8px; display: block; border-radius: 8px;'>";
-    }
+            if ($img && !empty($img['image_url'])) {
+                echo "<img src='" . htmlspecialchars($img['image_url']) . "' alt='Ảnh đánh giá' 
+                      style='max-width: 300px; margin-top: 8px; display: block; border-radius: 8px;'>";
+            }
 
-    echo "<em>{$rev['created_at']}</em>";
-    echo "</div>";
-}
-
+            echo "<em>{$rev['created_at']}</em>";
+            echo "</div>";
+        }
     } else {
         echo "<p>Chưa có đánh giá nào cho quán này.</p>";
     }
@@ -106,19 +105,26 @@ $locationLink = "https://www.google.com/maps/search/?api=1&query=" . urlencode($
     <a href="restaurants.php">← Quay lại danh sách quán nổi bật</a>
   </div>
 </div>
+
+<!-- Scroll mượt đến section -->
 <script>
 $(document).ready(function () {
-  $("#toggle-hours").click(function () {
-    $(".hours-box").slideToggle();
+  $('#scroll-hours').click(function () {
+    const target = document.getElementById('hours-section');
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth' });
+    }
   });
 
-  $("#go-review").click(function () {
-    $('html, body').animate({
-      scrollTop: $(".reviews-box").offset().top - 20
-    }, 600);
+  $('#scroll-review').click(function () {
+    const target = document.getElementById('reviews-section');
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth' });
+    }
   });
 });
 </script>
+
 </body>
 </html>
 

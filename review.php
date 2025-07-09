@@ -1,7 +1,7 @@
 <?php
 session_start();
-include("includes/header.php"); 
-include('includes/config.php'); // Gọi file kết nối CSDL
+include("includes/header.php");
+include("includes/config.php");
 
 // Kiểm tra đăng nhập
 if (!isset($_SESSION['user_id'])) {
@@ -9,31 +9,30 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-// Lấy danh sách quán từ DB
+// Lấy ID từ URL nếu có (viết đánh giá cho quán cụ thể)
+$restaurant_id = isset($_GET['id']) ? (int)$_GET['id'] : null;
+$restaurant_name = '';
+$restaurant_location = '';
+
+// Nếu có ID thì lấy tên & địa chỉ quán đó để đổ sẵn vào form
+if ($restaurant_id) {
+    $stmt = $link->prepare("SELECT name, location FROM restaurants WHERE id = ?");
+    $stmt->bind_param("i", $restaurant_id);
+    $stmt->execute();
+    $stmt->bind_result($restaurant_name, $restaurant_location);
+    $stmt->fetch();
+    $stmt->close();
+}
+
+// Lấy tất cả quán để hiện datalist (cho phép tạo mới nếu muốn)
 $sql = "SELECT id, name, location FROM restaurants";
 $result = $link->query($sql);
 $restaurants = [];
-while ($rev = mysqli_fetch_assoc($reviews)) {
-    echo "<div class='review-item'>";
-    echo "<strong>{$rev['username']}</strong> ({$rev['rating']}★): {$rev['content']}<br>";
-
-    // Truy vấn ảnh dựa theo review_id
-    $review_id = $rev['review_id'];
-    $img_sql = "SELECT image_url FROM images WHERE review_id = $review_id LIMIT 1";
-    $img_result = mysqli_query($link, $img_sql);
-    $img = mysqli_fetch_assoc($img_result);
-
-    if ($img && !empty($img['image_url'])) {
-        echo "<img src='" . htmlspecialchars($img['image_url']) . "' alt='Ảnh đánh giá' 
-                 style='max-width: 300px; margin-top: 8px; display: block; border-radius: 8px;'>";
-    }
-
-    echo "<em>{$rev['created_at']}</em>";
-    echo "</div>";
+while ($row = mysqli_fetch_assoc($result)) {
+    $restaurants[] = $row;
 }
 
-
-// Xử lý khi người dùng gửi đánh giá
+// Gửi đánh giá
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $restaurant_name = trim($_POST['restaurant_name']);
     $restaurant_location = trim($_POST['restaurant_location']);
@@ -42,13 +41,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $review_content = trim($_POST['review_content']);
     $user_id = $_SESSION['user_id'];
 
-    // Kiểm tra xem quán đã tồn tại chưa
-    $restaurant_id = null;
-    foreach ($restaurants as $res) {
-        if (strtolower($res['name']) === strtolower($restaurant_name)) {
-            $restaurant_id = $res['id'];
-            $restaurant_location = $res['location'];
-            break;
+    // Nếu chưa có ID → kiểm tra quán đó đã tồn tại chưa
+    if (!$restaurant_id) {
+        foreach ($restaurants as $res) {
+            if (strtolower($res['name']) === strtolower($restaurant_name)) {
+                $restaurant_id = $res['id'];
+                $restaurant_location = $res['location'];
+                break;
+            }
         }
     }
 
@@ -56,68 +56,76 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!$restaurant_id) {
         $stmt = $link->prepare("INSERT INTO restaurants (name, location, price_level) VALUES (?, ?, ?)");
         $stmt->bind_param("sss", $restaurant_name, $restaurant_location, $price_level);
-        if ($stmt->execute()) {
-            $restaurant_id = $stmt->insert_id;
-        } else {
-            echo "<p style='color:red'>Lỗi khi thêm quán mới: " . $stmt->error . "</p>";
-            exit();
-        }
+        $stmt->execute();
+        $restaurant_id = $stmt->insert_id;
     }
 
-    // ✅ BƯỚC 1: Thêm đánh giá trước
+    // Thêm đánh giá
     $stmt = $link->prepare("INSERT INTO reviews (restaurant_id, user_id, content, rating) VALUES (?, ?, ?, ?)");
     $stmt->bind_param("iisd", $restaurant_id, $user_id, $review_content, $rating);
-    if ($stmt->execute()) {
-        $review_id = $stmt->insert_id; // ✅ lấy id review mới thêm
+    $stmt->execute();
+    $review_id = $stmt->insert_id;
 
-        // ✅ BƯỚC 2: Lưu ảnh nếu có, và gắn vào review_id
-        if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-            $upload_dir = 'uploads/';
-            if (!is_dir($upload_dir)) mkdir($upload_dir, 0777, true);
-            $filename = uniqid() . '_' . basename($_FILES['image']['name']);
-            $image_path = $upload_dir . $filename;
-            move_uploaded_file($_FILES['image']['tmp_name'], $image_path);
+    // Upload ảnh nếu có
+    if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+        $upload_dir = 'uploads/';
+        if (!is_dir($upload_dir)) mkdir($upload_dir, 0777, true);
+        $filename = uniqid() . '_' . basename($_FILES['image']['name']);
+        $image_path = $upload_dir . $filename;
+        move_uploaded_file($_FILES['image']['tmp_name'], $image_path);
 
-            // Lưu vào bảng images (có cả review_id)
-            $stmt = $link->prepare("INSERT INTO images (restaurant_id, review_id, image_url, uploaded_by) VALUES (?, ?, ?, ?)");
-            $stmt->bind_param("iisi", $restaurant_id, $review_id, $image_path, $user_id);
-            $stmt->execute();
-        }
-
-        echo "<script>alert('Gửi đánh giá thành công!'); window.location.href='index.php';</script>";
-        exit();
-    } else {
-        echo "<p style='color:red'>Lỗi khi gửi đánh giá: " . $stmt->error . "</p>";
+        $stmt = $link->prepare("INSERT INTO images (restaurant_id, review_id, image_url, uploaded_by) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("iisi", $restaurant_id, $review_id, $image_path, $user_id);
+        $stmt->execute();
     }
-}
 
+    // Cập nhật rating trung bình
+$sql = "
+    UPDATE restaurants r
+    LEFT JOIN (
+        SELECT restaurant_id, ROUND(AVG(rating), 1) AS avg_rating
+        FROM reviews
+        GROUP BY restaurant_id
+    ) AS avg_r
+    ON r.id = avg_r.restaurant_id
+    SET r.rating = IFNULL(avg_r.avg_rating, 0)
+";
+
+if (mysqli_query($link, $sql)) {
+    echo "✅ Đã cập nhật rating trung bình cho tất cả nhà hàng.";
+} else {
+    echo "❌ Lỗi: " . mysqli_error($link);
+}
+    echo "<script>alert('Gửi đánh giá thành công!'); window.location.href='index.php';</script>";
+    exit();
+}
 ?>
 
 <!DOCTYPE html>
 <html lang="vi">
-
 <head>
     <meta charset="UTF-8">
     <title>Đánh giá quán ăn</title>
     <link rel="stylesheet" href="assets/css/review.css">
 </head>
-
 <body>
     <form method="POST" enctype="multipart/form-data">
         <h2>Viết đánh giá quán ăn</h2>
 
         <label for="restaurant_name">Tên quán:</label>
-        <input list="restaurant-list" name="restaurant_name" required>
+        <input list="restaurant-list" name="restaurant_name" id="restaurant_name"
+               value="<?= htmlspecialchars($restaurant_name) ?>" <?= $restaurant_id ? 'readonly' : '' ?> required>
         <datalist id="restaurant-list">
             <?php foreach ($restaurants as $res): ?>
-            <option value="<?= htmlspecialchars($res['name']) ?>">
-                <?php endforeach; ?>
+                <option value="<?= htmlspecialchars($res['name']) ?>"></option>
+            <?php endforeach; ?>
         </datalist>
 
         <label for="restaurant_location">Địa chỉ quán:</label>
-        <input type="text" name="restaurant_location" required>
+        <input type="text" name="restaurant_location" id="restaurant_location"
+               value="<?= htmlspecialchars($restaurant_location) ?>" <?= $restaurant_id ? 'readonly' : '' ?>>
 
-        <label for="image">Hình ảnh quán:</label>
+        <label for="image">Hình ảnh:</label>
         <input type="file" name="image" accept="image/*">
 
         <label for="price_level">Mức giá:</label>
@@ -130,7 +138,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <label for="rating">Đánh giá sao:</label>
         <select name="rating" required>
             <?php for ($i = 1; $i <= 5; $i++): ?>
-            <option value="<?= $i ?>"><?= $i ?> sao</option>
+                <option value="<?= $i ?>"><?= $i ?> sao</option>
             <?php endfor; ?>
         </select>
 
@@ -141,4 +149,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </form>
 </body>
 </html>
+
 <?php include("includes/footer.php"); ?>

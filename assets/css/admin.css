@@ -1,0 +1,50 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #fffaf5;
+    color: #333;
+}
+
+.admin-header {
+    background: #ff7043;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+}
+
+.admin-container {
+    display: flex;
+    min-height: calc(100vh - 50px);
+}
+
+.admin-sidebar {
+    width: 200px;
+    background: #fff3e0;
+    padding: 15px;
+}
+
+.admin-sidebar nav a {
+    display: block;
+    color: #333;
+    text-decoration: none;
+    margin: 8px 0;
+    padding: 8px;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.admin-sidebar nav a:hover {
+    background: #ffe0b2;
+}
+
+.admin-main {
+    flex: 1;
+    padding: 20px;
+}
+
+.admin-footer {
+    background: #eee;
+    color: #555;
+    text-align: center;
+    padding: 10px;
+}

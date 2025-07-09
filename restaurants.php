@@ -13,7 +13,7 @@
 <body>
    <?php include("includes/config.php"); ?>
 <?php
-$sql = "SELECT id, name, location, image_url,price_level, count FROM restaurants";
+$sql = "SELECT id, name, location, image_url,price_level,rating, count FROM restaurants";
 mysqli_set_charset($link, "utf8");
 $categories_res = mysqli_query($link, "SELECT id, name FROM categories");
 
@@ -78,6 +78,8 @@ while ($row = mysqli_fetch_assoc($result)) {
     </h4>
     <p>📍 <?php echo $row['location']; ?></p>
     <p>👁 <?php echo $row['count']; ?> lượt truy cập</p>
+    <p>⭐ <?= $row['rating'] ? $row['rating'] . '/5' : 'Chưa có đánh giá' ?></p>
+
     <a href="#" class="xemchitiet" data-id="<?php echo $row['id']; ?>">Xem chi tiết</a>
 </a>
 
