@@ -52,16 +52,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // Nếu quán chưa tồn tại → thêm mới
+    // Nếu quán chưa tồn tại → thêm vào bảng chờ duyệt restaurants_pending
     if (!$restaurant_id) {
-        $stmt = $link->prepare("INSERT INTO restaurants (name, location, price_level) VALUES (?, ?, ?)");
+        $stmt = $link->prepare("INSERT INTO restaurants_pending (name, location, price_level, rating, category_id, image_url) VALUES (?, ?, ?, 0, 1, '')");
         $stmt->bind_param("sss", $restaurant_name, $restaurant_location, $price_level);
         $stmt->execute();
         $restaurant_id = $stmt->insert_id;
     }
 
-    // Thêm đánh giá
-    $stmt = $link->prepare("INSERT INTO reviews (restaurant_id, user_id, content, rating) VALUES (?, ?, ?, ?)");
+    // Thêm đánh giá vào bảng reviews (chờ duyệt)
+    $stmt = $link->prepare("INSERT INTO reviews (restaurant_id, user_id, content, rating, is_approved) VALUES (?, ?, ?, ?, 0)");
     $stmt->bind_param("iisd", $restaurant_id, $user_id, $review_content, $rating);
     $stmt->execute();
     $review_id = $stmt->insert_id;
@@ -79,51 +79,58 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute();
     }
 
-    // Cập nhật rating trung bình
-$sql = "
-    UPDATE restaurants r
-    LEFT JOIN (
-        SELECT restaurant_id, ROUND(AVG(rating), 1) AS avg_rating
-        FROM reviews
-        GROUP BY restaurant_id
-    ) AS avg_r
-    ON r.id = avg_r.restaurant_id
-    SET r.rating = IFNULL(avg_r.avg_rating, 0)
-";
-
-if (mysqli_query($link, $sql)) {
-    echo "✅ Đã cập nhật rating trung bình cho tất cả nhà hàng.";
-} else {
-    echo "❌ Lỗi: " . mysqli_error($link);
-}
-    echo "<script>alert('Gửi đánh giá thành công!'); window.location.href='index.php';</script>";
+    // Không cập nhật rating trung bình vì đánh giá chưa được duyệt
+    echo "<script>alert('Gửi đánh giá thành công! Chờ admin duyệt.'); window.location.href='index.php';</script>";
     exit();
 }
-?>
+
+    // Cập nhật rating trung bình
+// $sql = "
+//     UPDATE restaurants r
+//     LEFT JOIN (
+//         SELECT restaurant_id, ROUND(AVG(rating), 1) AS avg_rating
+//         FROM reviews
+//         GROUP BY restaurant_id
+//     ) AS avg_r
+//     ON r.id = avg_r.restaurant_id
+//     SET r.rating = IFNULL(avg_r.avg_rating, 0)
+// ";
+
+// if (mysqli_query($link, $sql)) {
+//     echo "✅ Đã cập nhật rating trung bình cho tất cả nhà hàng.";
+// } else {
+//     echo "❌ Lỗi: " . mysqli_error($link);
+// }
+//     echo "<script>alert('Gửi đánh giá thành công!'); window.location.href='index.php';</script>";
+//     exit();
+// }
+// ?>
 
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <title>Đánh giá quán ăn</title>
     <link rel="stylesheet" href="assets/css/review.css">
 </head>
+
 <body>
     <form method="POST" enctype="multipart/form-data">
         <h2>Viết đánh giá quán ăn</h2>
 
         <label for="restaurant_name">Tên quán:</label>
         <input list="restaurant-list" name="restaurant_name" id="restaurant_name"
-               value="<?= htmlspecialchars($restaurant_name) ?>" <?= $restaurant_id ? 'readonly' : '' ?> required>
+            value="<?= htmlspecialchars($restaurant_name) ?>" <?= $restaurant_id ? 'readonly' : '' ?> required>
         <datalist id="restaurant-list">
             <?php foreach ($restaurants as $res): ?>
-                <option value="<?= htmlspecialchars($res['name']) ?>"></option>
+            <option value="<?= htmlspecialchars($res['name']) ?>"></option>
             <?php endforeach; ?>
         </datalist>
 
         <label for="restaurant_location">Địa chỉ quán:</label>
         <input type="text" name="restaurant_location" id="restaurant_location"
-               value="<?= htmlspecialchars($restaurant_location) ?>" <?= $restaurant_id ? 'readonly' : '' ?>>
+            value="<?= htmlspecialchars($restaurant_location) ?>" <?= $restaurant_id ? 'readonly' : '' ?>>
 
         <label for="image">Hình ảnh:</label>
         <input type="file" name="image" accept="image/*">
@@ -138,13 +145,13 @@ if (mysqli_query($link, $sql)) {
 
         <label for="rating">Đánh giá sao:</label>
         <div class="star-rating" id="ratingStars">
-      <span class="star" data-star="1">★</span>
-      <span class="star" data-star="2">★</span>
-      <span class="star" data-star="3">★</span>
-      <span class="star" data-star="4">★</span>
-      <span class="star" data-star="5">★</span>
-    </div>
-    <input type="hidden" name="rating" id="rating" value="0">
+            <span class="star" data-star="1">★</span>
+            <span class="star" data-star="2">★</span>
+            <span class="star" data-star="3">★</span>
+            <span class="star" data-star="4">★</span>
+            <span class="star" data-star="5">★</span>
+        </div>
+        <input type="hidden" name="rating" id="rating" value="0">
 
         <label for="review_content">Nội dung đánh giá:</label>
         <textarea name="review_content" rows="5" required></textarea>
@@ -153,28 +160,29 @@ if (mysqli_query($link, $sql)) {
     </form>
 </body>
 <script>
-    const stars = document.querySelectorAll(".star");
-    const ratingInput = document.getElementById("rating");
+const stars = document.querySelectorAll(".star");
+const ratingInput = document.getElementById("rating");
 
-    stars.forEach((star, index) => {
-      star.addEventListener("mouseover", () => {
+stars.forEach((star, index) => {
+    star.addEventListener("mouseover", () => {
         stars.forEach((s, i) => {
-          s.classList.toggle("hover", i <= index);
+            s.classList.toggle("hover", i <= index);
         });
-      });
+    });
 
-      star.addEventListener("mouseout", () => {
+    star.addEventListener("mouseout", () => {
         stars.forEach(s => s.classList.remove("hover"));
-      });
+    });
 
-      star.addEventListener("click", () => {
+    star.addEventListener("click", () => {
         ratingInput.value = index + 1;
         stars.forEach((s, i) => {
-          s.classList.toggle("selected", i <= index);
+            s.classList.toggle("selected", i <= index);
         });
-      });
     });
-  </script>
+});
+</script>
+
 </html>
 
 <?php include("includes/footer.php"); ?>
