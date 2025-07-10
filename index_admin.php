@@ -10,14 +10,49 @@ if (!isset($_SESSION['admin_logged_in'])) {
 // Duyệt & Xóa review
 if (isset($_GET['approve_review'])) {
     $id = (int)$_GET['approve_review'];
-    mysqli_query($link, "UPDATE reviews SET is_approved = 1 WHERE id = $id");
+    $stmt = $link->prepare("UPDATE reviews SET is_approved = 1 WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    if ($stmt->execute()) {
+        // Cập nhật rating trung bình
+        $stmt_rest = $link->prepare("SELECT restaurant_id FROM reviews WHERE id = ?");
+        $stmt_rest->bind_param("i", $id);
+        $stmt_rest->execute();
+        $stmt_rest->bind_result($restaurant_id);
+        $stmt_rest->fetch();
+        $stmt_rest->close();
+        $stmt_update = $link->prepare("
+            UPDATE restaurants r
+            LEFT JOIN (
+                SELECT restaurant_id, ROUND(AVG(rating), 1) AS avg_rating
+                FROM reviews
+                WHERE is_approved = 1
+                GROUP BY restaurant_id
+            ) AS avg_r
+            ON r.id = avg_r.restaurant_id
+            SET r.rating = IFNULL(avg_r.avg_rating, 0)
+            WHERE r.id = ?
+        ");
+        $stmt_update->bind_param("i", $restaurant_id);
+        $stmt_update->execute();
+        $stmt_update->close();
+        echo "<script>alert('Duyệt đánh giá thành công!'); window.location.href='index_admin.php';</script>";
+    } else {
+        echo "<script>alert('Lỗi khi duyệt đánh giá!');</script>";
+    }
+    $stmt->close();
 }
 if (isset($_GET['delete_review'])) {
     $id = (int)$_GET['delete_review'];
-    mysqli_query($link, "DELETE FROM reviews WHERE id = $id");
+    $stmt = $link->prepare("DELETE FROM reviews WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    if ($stmt->execute()) {
+        echo "<script>alert('Xóa đánh giá thành công!'); window.location.href='index_admin.php';</script>";
+    } else {
+        echo "<script>alert('Lỗi khi xóa đánh giá!');</script>";
+    }
+    $stmt->close();
 }
 
-// Duyệt & Xóa quán chờ duyệt
 // Duyệt & Xóa quán chờ duyệt
 if (isset($_GET['approve_pending'])) {
     $id = (int)$_GET['approve_pending'];
