@@ -1,116 +1,77 @@
 body {
-    background: linear-gradient(to right, #fff3e0, #ffe0b2);
-    font-family:Arial, Helvetica, sans-serif;
-    color: #333;
-    margin: 0;
-    padding: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: #f2f2f2;
+  margin: 0;
 }
 
+h2 {
+  text-align: center;
+  color: #2c3e50;
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+.star-rating {
+      display: flex;
+      gap: 5px;
+      font-size: 28px;
+      cursor: pointer;
+      margin-top: 5px;
+    }
+.star {
+      color: #ccc;
+      transition: color 0.2s;
+    }
+.star.hover,
+  .star.selected {
+      color: gold;
+    }
 form {
-    max-width: 600px;
-    margin: 50px auto;
-    background: #ffffff;
-    padding: 24px 38px;
-    border-radius: 18px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease-in-out;
-    position: relative;
+  max-width: 501px;
+  margin: 40px auto;
+  background: rgb(227, 192, 64);
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 0 10px #ccc;
 }
 
-form h2 {
-    text-align: center;
-    margin-bottom: 20px;
-    font-size: 24px;
-    color: #ff6600;
-}
-
-/* Label */
 label {
-    display: block;
-    margin-bottom: 4px;
-    font-weight: 600;
-    color: #444;
-    position: relative;
-    padding-left: 28px;
+  display: block;
+  font-weight: bold;
+  margin-bottom: 6px;
+  color: #34495e;
+  margin-top: 15px;
 }
 
-label::before {
-    position: absolute;
-    left: 0;
-    top: 0;
-    font-size: 18px;
-}
-
-label[for="restaurant_name"]::before { content: "🏪"; }
-label[for="restaurant_location"]::before { content: "📍"; }
-label[for="image"]::before { content: "🖼️"; }
-label[for="price_level"]::before { content: "💰"; }
-label[for="rating"]::before { content: "⭐"; }
-label[for="review_content"]::before { content: "📝"; }
-
-/* Input field đẹp hơn */
 input[type="text"],
 input[type="file"],
 select,
 textarea {
-    width: 100%;
-    padding: 10px 12px;
-    margin-bottom: 16px;
-    border: 1.8px solid #ddd;
-    border-radius: 12px;
-    font-size: 15.5px;
-    background-color: #fffdfa;
-    transition: all 0.3s ease-in-out;
-    box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+  width: 90%;
+  padding: 10px 12px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 15px;
+  background-color: #fdfdfd;
 }
 
-/* Hiệu ứng khi focus */
-input:focus,
-select:focus,
-textarea:focus {
-    border-color: #ff9800;
-    background-color: #fffaf2;
-    box-shadow: 0 0 0 4px rgba(255, 152, 0, 0.15);
-    outline: none;
-}
-
-/* File input đặc biệt */
-input[type="file"] {
-    background-color: #fff7f2;
-    padding: 10px 12px;
-    border: 1.5px dashed #ffab66;
-    color: #555;
-}
-
-/* Textarea */
 textarea {
-    resize: vertical;
-    min-height: 90px;
+  resize: vertical;
 }
 
-/* Nút GỬI */
 button {
-    background: linear-gradient(to right, #ff9800, #ff5722);
-    color: white;
-    padding: 14px 26px;
-    font-size: 16px;
-    border: none;
-    border-radius: 50px;
-    cursor: pointer;
-    font-weight: bold;
-    box-shadow: 0 4px 14px rgba(255, 87, 34, 0.3);
-    transition: all 0.3s ease-in-out;
-    display: block;
-    width: 100%;
-    margin-top: 10px;
+  margin-top: 20px;
+  width: 100%;
+  padding: 12px;
+  background-color: #27ae60;
+  color: white;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s;
 }
 
 button:hover {
-    background: linear-gradient(to right, #ff7043, #e64a19);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(255, 87, 34, 0.35);
-}
-
-button:active {
-    transform: scale(0.98);
+  background-color: #1e8449;
 }

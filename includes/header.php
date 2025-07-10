@@ -21,6 +21,7 @@ if (session_status() == PHP_SESSION_NONE) {
         <a href="index.php">Trang chủ</a>
         <a href="restaurants.php">Quán nổi bật</a>
         <a href="review.php">Viết đánh giá</a>
+        <a href="submit_restaurant.php">Thêm quán ăn</a>
       </nav>
     </div>
     <nav class="nav-right">

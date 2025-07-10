@@ -130,17 +130,21 @@ if (mysqli_query($link, $sql)) {
 
         <label for="price_level">Mức giá:</label>
         <select name="price_level" required>
+            <option value="">-- Chọn giá --</option>
             <option value="Rẻ">Rẻ</option>
             <option value="Trung bình">Trung bình</option>
             <option value="Đắt">Đắt</option>
         </select>
 
         <label for="rating">Đánh giá sao:</label>
-        <select name="rating" required>
-            <?php for ($i = 1; $i <= 5; $i++): ?>
-                <option value="<?= $i ?>"><?= $i ?> sao</option>
-            <?php endfor; ?>
-        </select>
+        <div class="star-rating" id="ratingStars">
+      <span class="star" data-star="1">★</span>
+      <span class="star" data-star="2">★</span>
+      <span class="star" data-star="3">★</span>
+      <span class="star" data-star="4">★</span>
+      <span class="star" data-star="5">★</span>
+    </div>
+    <input type="hidden" name="rating" id="rating" value="0">
 
         <label for="review_content">Nội dung đánh giá:</label>
         <textarea name="review_content" rows="5" required></textarea>
@@ -148,6 +152,29 @@ if (mysqli_query($link, $sql)) {
         <button type="submit">Gửi đánh giá</button>
     </form>
 </body>
+<script>
+    const stars = document.querySelectorAll(".star");
+    const ratingInput = document.getElementById("rating");
+
+    stars.forEach((star, index) => {
+      star.addEventListener("mouseover", () => {
+        stars.forEach((s, i) => {
+          s.classList.toggle("hover", i <= index);
+        });
+      });
+
+      star.addEventListener("mouseout", () => {
+        stars.forEach(s => s.classList.remove("hover"));
+      });
+
+      star.addEventListener("click", () => {
+        ratingInput.value = index + 1;
+        stars.forEach((s, i) => {
+          s.classList.toggle("selected", i <= index);
+        });
+      });
+    });
+  </script>
 </html>
 
 <?php include("includes/footer.php"); ?>
