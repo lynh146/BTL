@@ -18,17 +18,25 @@ if (isset($_GET['delete_review'])) {
 }
 
 // Duyệt & Xóa quán chờ duyệt
+// Duyệt & Xóa quán chờ duyệt
 if (isset($_GET['approve_pending'])) {
     $id = (int)$_GET['approve_pending'];
-    $sql = "INSERT INTO restaurants (name, location, price_level, rating, category_id, image_url, count, is_featured)
-            SELECT name, location, price_level, rating, category_id, image_url, 0, 0 FROM restaurants_pending WHERE id = $id";
-    mysqli_query($link, $sql);
-    mysqli_query($link, "DELETE FROM restaurants_pending WHERE id = $id");
+
+    $sql = "
+        INSERT INTO restaurants 
+        (name, location, price_level, rating, category_id, image_url, count)
+        SELECT name, location, price_level, rating, category_id, image_url, 0
+        FROM restaurants_pending WHERE id = $id
+    ";
+
+    if (mysqli_query($link, $sql)) {
+        // Xóa bản ghi bên restaurants_pending
+        mysqli_query($link, "DELETE FROM restaurants_pending WHERE id = $id");
+    } else {
+        echo "<script>alert('❌ Lỗi khi duyệt: " . mysqli_error($link) . "');</script>";
+    }
 }
-if (isset($_GET['delete_pending'])) {
-    $id = (int)$_GET['delete_pending'];
-    mysqli_query($link, "DELETE FROM restaurants_pending WHERE id = $id");
-}
+
 
 // Dữ liệu
 $restaurants = mysqli_query($link, "SELECT * FROM restaurants");
